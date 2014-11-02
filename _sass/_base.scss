@@ -1,0 +1,60 @@
+body {
+    background: $background-color;
+    color: $text-color;
+    font-family: $font-family;
+}
+
+#content .container {
+    z-index: 1;
+
+    h1, h2, h3 {
+        font-family: $font-family-header;
+    }
+
+    p, li {
+        line-height: $content-line-height;
+    }
+
+    li > p {
+        line-height: normal;
+    }
+}
+
+footer {
+    background: $footer-background-color;
+    color: $footer-text-color;
+}
+
+#copyright {
+    font-size:12px;
+}
+
+
+.code-type {
+    font-size: smaller;
+}
+
+.code-description {
+    display: block;
+    padding-bottom: 5px;
+    margin-left: 30px;
+}
+
+
+a {
+    color: $accent-color;
+}
+
+a:hover, a:focus {
+    color: lighten($accent-color, 30%);
+}
+
+.icon {
+    > svg {
+        display: inline-block;
+        vertical-align: middle;
+        path {
+            fill: #aaa;
+        }
+    }
+}

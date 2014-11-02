@@ -1,0 +1,10 @@
+title: Guild Wars 2 Map
+shorttitle: GW2M
+description: A map of Guild Wars 2
+baseurl: "/gw2map"
+url: "http://archomeda.github.io"
+
+github_url: "https://github.com/Archomeda/gw2map"
+
+exclude: [README.md, LICENSE, start.bat]
+markdown: kramdown

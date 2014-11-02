@@ -1,0 +1,94 @@
+@mixin flexbox() {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: -o-flex;
+    display: flex;
+}
+
+@mixin flex($values) {
+    -webkit-box-flex: $values;
+    -moz-box-flex: $values;
+    -webkit-flex: $values;
+    -ms-flex: $values;
+    -o-flex: $values;
+    flex: $values;
+}
+
+@mixin flexdirection($values) {
+    -webkit-flex-direction: $values;
+    -moz-flex-direction: $values;
+    -ms-flex-direction: $values;
+    -o-flex-direction: $values;
+    flex-direction: $values;
+}
+
+
+body {
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
+    min-width: $min-width;
+    @include flexbox();
+    @include flexdirection(column);
+}
+
+.navbar {
+    min-width: $min-width;
+}
+
+#content, #map {
+    @include flexbox();
+    @include flex(1);
+    margin-top: $content-padding-top;
+}
+
+#content .container {
+    padding-bottom: 10px;
+}
+
+
+.no-list-style {
+    list-style: none;
+    padding-left: 0;
+}
+
+.list-combine li {
+    display: inline-block;
+    margin: 2px 5px;
+}
+
+footer {
+    padding-top: $footer-padding-top;
+    padding-bottom: $footer-padding-bottom;
+}
+
+footer p {
+    margin: 3px auto;
+}
+
+footer .container {
+    @include flexbox();
+    @include flexdirection(row);
+}
+
+#footer_info {
+    min-width: 250px;
+}
+
+@media (max-width: 991px) {
+    #footer_info {
+        min-width: 200px;
+    }
+}
+
+@media (max-width: 550px), (max-height: 550px) {
+    footer {
+        display: none;
+    }
+}
+
+#copyright {
+    @include flex(1);
+}

@@ -1,0 +1,44 @@
+---
+# Only the main Sass file needs front matter (the dashes are enough)
+---
+@charset "utf-8";
+
+
+$font-family: "Open Sans", Tahoma;
+$font-family-header: Cardo, Georgia;
+$min-width: 240px;
+$content-line-height: 24px;
+
+$text-color: #ddd;
+$background-color: #080808;
+$accent-color: #bf8444;
+
+$content-padding-top: 50px;
+
+$footer-background-color: #111;
+$footer-text-color: #555;
+$footer-padding-top: 10px;
+$footer-padding-bottom: 10px;
+$footer-spacing: 5px;
+
+
+// Map stuff
+$map-region-label-colors: (
+    1: #eeeeee, // Shiverpeak Mountains
+    2: #ff0000, // Ascalon
+    3: #ff6600, // Ruins of Orr
+    4: #bb77ff, // Kryta
+    5: #00ffff, // Tarnished Coast
+    8: #00ff00, // Steamspur Mountains
+    11: #ffff00 // Maguuma Wastes
+);
+
+
+
+// Import partials from `sass_dir` (defaults to `_sass`)
+@import
+    "base",
+    "map",
+    "layout",
+    "layout_ie11"
+;

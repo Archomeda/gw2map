@@ -1,0 +1,62 @@
+.leaflet-container {
+	background: $background-color;
+}
+
+.leaflet-popup-content-wrapper {
+    color: #000;
+}
+
+.region-label, .map-label {
+    text-shadow:
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
+}
+
+.region-label {
+    text-align: center;
+	padding: 3px 10px;
+	font-size: 14pt;
+
+	color: #ffffff;
+    border: 2px dashed #ffffff;
+}
+
+.map-label {
+    text-align: center;
+    color: #ffffff;
+}
+
+.map-label-default {
+    @extend .map-label;
+}
+
+.map-label-city {
+    @extend .map-label;
+    font-style: italic;
+}
+
+.map-label-dungeon {
+    @extend .map-label;
+    font-size: 8pt;
+}
+
+@each $id, $color in $map-region-label-colors {
+    .region-label-#{$id} {
+        @extend .region-label;
+        border-color: $color;
+        color: $color;
+    }
+
+    .map-label-region-#{$id} {
+        @extend .map-label;
+    }
+
+    path.region-boundary-#{$id} {
+        stroke: $color;
+        fill: $color;
+        stroke-opacity: 0.6;
+        fill-opacity: 0.15;
+    }
+}
