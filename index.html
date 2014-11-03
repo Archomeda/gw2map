@@ -55,6 +55,12 @@ navweight: 0
 		setContinentView(continents[e.name], 1);
 	}
 
+	function onZoomEnd(e) {
+		var zoom = map.getZoom();
+		$("#map").attr("zoom-level", zoom);
+		$(".region-label").fixMapIconAnchor();
+	}
+
 	function setContinentView(continent, floor_id) {
 		var name = continent.name;
 		var width = continent.continent_dims[0];
@@ -147,6 +153,7 @@ navweight: 0
 		map = L.map("map", { crs: L.CRS.Simple });
 		map.on("baselayerchange", onBaselayerChange);
 		map.on("overlayadd", onOverlayAdd);
+		map.on("zoomend", onZoomEnd);
 
 		getGW2API("/v1/continents.json", function(data) {
 			$.each(data.continents, function(id, continent) {

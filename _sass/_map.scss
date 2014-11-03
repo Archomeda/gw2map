@@ -17,10 +17,11 @@
 .region-label {
     text-align: center;
 	padding: 3px 10px;
-	font-size: 14pt;
-
+	font-family: Menomonia;
+	font-style: italic;
+	font-size: 22pt;
+	white-space: nowrap;
 	color: #ffffff;
-    border: 2px dashed #ffffff;
 }
 
 .map-label {
@@ -52,8 +53,7 @@
 @each $id, $color in $map-region-label-colors {
     .region-label-#{$id} {
         @extend .region-label;
-        border-color: $color;
-        color: $color;
+        color: lighten($color, 20);
     }
 
     .map-label-region-#{$id} {
@@ -65,4 +65,51 @@
         stroke: $color;
         fill: $color;
     }
+}
+
+
+#map[zoom-level="0"] {
+	.region-label {
+		font-size: 6pt;
+	}
+}
+
+#map[zoom-level="1"] {
+	.region-label {
+		font-size: 10pt;
+	}
+}
+
+#map[zoom-level="2"] {
+	.region-label {
+		font-size: 14pt;
+	}
+}
+
+#map[zoom-level="3"] {
+	.region-label {
+		font-size: 18pt;
+	}
+}
+
+#map[zoom-level="4"] {
+
+}
+
+#map[zoom-level="5"] {
+	.region-label {
+		opacity: 0.7;
+	}
+}
+
+#map[zoom-level="6"] {
+	.region-label {
+		opacity: 0.4;
+	}
+}
+
+#map[zoom-level="7"] {
+	.region-label {
+		opacity: 0.4;
+	}
 }
