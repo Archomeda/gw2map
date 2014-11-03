@@ -24,6 +24,7 @@
 }
 
 .map-label {
+	min-width: 100px;
     text-align: center;
     color: #ffffff;
 }
@@ -40,6 +41,7 @@
 .map-label-dungeon {
     @extend .map-label;
     font-size: 8pt;
+	min-width: 75px;
 }
 
 .map-boundary {
