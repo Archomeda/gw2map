@@ -58,7 +58,7 @@ navweight: 0
 	function onZoomEnd(e) {
 		var zoom = map.getZoom();
 		$("#map").attr("zoom-level", zoom);
-		$(".region-label").fixMapIconAnchor();
+		$(".region-label, .map-label").fixMapIconAnchor();
 	}
 
 	function setContinentView(continent, floor_id) {

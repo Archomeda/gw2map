@@ -19,7 +19,7 @@
 	padding: 3px 10px;
 	font-family: Menomonia;
 	font-style: italic;
-	font-size: 22pt;
+	font-size: 24pt;
 	white-space: nowrap;
 	color: #ffffff;
 }
@@ -27,6 +27,8 @@
 .map-label {
 	min-width: 100px;
     text-align: center;
+	font-family: Menomonia;
+	font-size: 20pt;
     color: #ffffff;
 }
 
@@ -41,7 +43,7 @@
 
 .map-label-dungeon {
     @extend .map-label;
-    font-size: 8pt;
+    font-size: 16pt;
 	min-width: 75px;
 }
 
@@ -72,28 +74,58 @@
 	.region-label {
 		font-size: 6pt;
 	}
+
+	.map-label {
+		display: none;
+	}
 }
 
 #map[zoom-level="1"] {
 	.region-label {
-		font-size: 10pt;
+		font-size: 12pt;
+	}
+
+	.map-label {
+		display: none;
 	}
 }
 
 #map[zoom-level="2"] {
 	.region-label {
-		font-size: 14pt;
+		font-size: 16pt;
+	}
+
+	.map-label {
+		font-size: 8pt;
+	}
+
+	.map-label-dungeon {
+		display: none;
 	}
 }
 
 #map[zoom-level="3"] {
 	.region-label {
-		font-size: 18pt;
+		font-size: 20pt;
+	}
+
+	.map-label {
+		font-size: 12pt;
+	}
+
+	.map-label-dungeon {
+		font-size: 8pt;
 	}
 }
 
 #map[zoom-level="4"] {
+	.map-label {
+		font-size: 16pt;
+	}
 
+	.map-label-dungeon {
+		font-size: 12pt;
+	}
 }
 
 #map[zoom-level="5"] {
