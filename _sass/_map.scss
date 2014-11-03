@@ -42,6 +42,11 @@
     font-size: 8pt;
 }
 
+.map-boundary {
+	stroke-opacity: 0.6;
+	fill-opacity: 0.15;
+}
+
 @each $id, $color in $map-region-label-colors {
     .region-label-#{$id} {
         @extend .region-label;
@@ -53,10 +58,9 @@
         @extend .map-label;
     }
 
-    path.region-boundary-#{$id} {
+    .region-boundary-#{$id} {
+		@extend .map-boundary;
         stroke: $color;
         fill: $color;
-        stroke-opacity: 0.6;
-        fill-opacity: 0.15;
     }
 }

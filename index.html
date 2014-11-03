@@ -10,11 +10,14 @@ navweight: 0
 <script>
 	var map;
 
+	var tilelayers = { };
 	var overlays = {
 		"Region names": null,
 		"Map names": null,
 		"Map boundaries": null
 	}
+
+	var continents = { };
 
 	var city_maps = [ // Add the cities since there's no other way of separating normal maps from instanced maps, other than getting event maps and manually adding the cities
 		18, // Divinity's Reach
@@ -48,126 +51,127 @@ navweight: 0
 		}
 	}
 
-	function unproject(coord) {
-		return map.unproject(coord, map.getMaxZoom());
+	function onBaselayerChange(e) {
+		setContinentView(continents[e.name], 1);
 	}
 
+	function setContinentView(continent, floor_id) {
+		var name = continent.name;
+		var width = continent.continent_dims[0];
+		var height = continent.continent_dims[1];
 
-	function addMapBoundary(mapData) {
-		var continent_rect = mapData.continent_rect;
-		var map_id = mapData.map_id;
-		var map_rect = mapData.map_rect;
-		var region_id = mapData.region_id;
+		tilelayers[name].setUrl("https://{s}.guildwars2.com/" + continent.continent_id + "/" + floor_id + "/{z}/{x}/{y}.jpg")
+		setMaxBounds(map, 0, 0, width, height);
+		map.setView(unproject(map, [width / 2, height / 2]), 3);
 
-		var popupTitle = mapData.map_name + " (" + mapData.region_name + ") - " + map_id;
-		var rectangleClassName = "map-boundary map-boundary-" + map_id + " region-boundary-" + region_id;
-		var labelClassName = "map-label map-label-" + map_id + " map-label-region-" + region_id;
-		switch (mapData.map_type) {
-			case "city":
-				popupTitle += " - City";
-				rectangleClassName += " region-boundary-map-city";
-				labelClassName += " map-label-city";
-				break;
-			case "dungeon":
-				popupTitle += " - Dungeon";
-				rectangleClassName += " region-boundary-map-dungeon";
-				labelClassName += " map-label-dungeon";
-				break;
-			default:
-				rectangleClassName += " region-boundary-map-default";
-				labelClassName += " map-label-default";
-				break;
+		if (continents[name].map_floor[floor_id] === undefined) {
+			getGW2API("/v1/map_floor.json?continent_id=" + continent.continent_id + "&floor=" + floor_id, function(data) {
+				continents[name].map_floor[floor_id] = data;
+				if (data.clamped_view !== undefined) {
+					setMaxBounds(map, data.clamped_view[0][0], data.clamped_view[0][1], data.clamped_view[1][0], data.clamped_view[1][1]);
+				}
+				placeRegionNames(map, overlays, data.regions);
+			});
+		} else {
+			var data = continents[name].map_floor[floor_id];
+			if (data.clamped_view !== undefined) {
+				setMaxBounds(map, data.clamped_view[0][0], data.clamped_view[0][1], data.clamped_view[1][0], data.clamped_view[1][1]);
+			}
+			placeRegionNames(map, overlays, data.regions);
 		}
 
-		var popup = "<b>" + popupTitle + "</b><br /><br />" +
-			"Continent coords: from (" + continent_rect[0][0] + "," + continent_rect[0][1] + ") to (" + continent_rect[1][0] + "," + continent_rect[1][1] + ")<br />" +
-			"Continent size: " + (continent_rect[1][0] - continent_rect[0][0]) + " x " + (continent_rect[1][1] - continent_rect[0][1]) + "<br />" +
-			"Map size: " + (map_rect[1][0] - map_rect[0][0]) + " x " + (map_rect[1][1] - map_rect[0][1]);
+		if (continents[name].maps === undefined) {
+			getGW2API(["/v1/map_names.json", "/v1/maps.json"], function(data) {
+				var data_mapnames = data[0];
+				var data_maps = data[1];
 
-		var continent_rect2 = [unproject(continent_rect[0]), unproject(continent_rect[1])];
-		var mapBoundaries = L.rectangle(continent_rect2, { className: rectangleClassName, weight: 1, clickable: true }).bindPopup(popup);
+				var mapData = data_maps.maps;
+				var maps = { };
 
-		label_coord = unproject([(continent_rect[0][0] + continent_rect[1][0]) / 2, (continent_rect[0][1] + continent_rect[1][1]) / 2]);
-		var label = L.divIcon({ className: labelClassName, html: mapData.map_name, iconSize: null });
-		var mapName = L.marker(label_coord, { icon: label, clickable: true }).bindPopup(popup);
+				var default_maps = data_mapnames;
+				if (continent.continent_id != 1) {
+					default_maps = mapData;
+				}
 
-		overlays["Map names"].addLayer(mapName);
-		overlays["Map boundaries"].addLayer(mapBoundaries);
+				for (var i in default_maps) {
+					var id = i;
+					if (default_maps[i].id !== undefined) {
+						id = default_maps[i].id;
+					}
+					if (mapData[id] !== undefined && mapData[id].continent_id == continent.continent_id) {
+						maps[id] = mapData[id];
+						maps[id].map_id = id;
+						maps[id].map_type = "";
+					}
+				}
+				for (var i in city_maps) {
+					var id = city_maps[i];
+					if (mapData[id] != undefined && mapData[id].continent_id == continent.continent_id) {
+						maps[id] = mapData[id];
+						maps[id].map_id = id;
+						maps[id].map_type = "city";
+					}
+				}
+				for (var i in dungeon_maps) {
+					var id = dungeon_maps[i];
+					if (mapData[id] != undefined && mapData[id].continent_id == continent.continent_id) {
+						maps[id] = mapData[id];
+						maps[id].map_id = id;
+						maps[id].map_type = "dungeon";
+					}
+				}
 
-		$(".map-label-" + map_id).fixMapIconAnchor();
+				var floor_maps = { };
+				for (var mapData in maps) {
+					mapData = maps[mapData];
+					for (var floor in mapData.floors) {
+						floor = mapData.floors[floor];
+						if (floor_maps[floor] === undefined) {
+							floor_maps[floor] = { };
+						}
+						floor_maps[floor][mapData.map_id] = mapData;
+					}
+				}
+
+				continents[name].maps = floor_maps;
+				placeMapNames(map, overlays, floor_maps[floor_id]);
+				placeMapBoundaries(map, overlays, floor_maps[floor_id]);
+			});
+		} else {
+			placeMapNames(map, overlays, continents[name].maps[floor_id]);
+			placeMapBoundaries(map, overlays, continents[name].maps[floor_id]);
+		}
 	}
 
-
 	$(function () {
-		map = L.map("map", {
-			minZoom: 2,
-			maxZoom: 7,
-			crs: L.CRS.Simple,
-			background: "#000000"
-		});
+		map = L.map("map", { crs: L.CRS.Simple });
+		map.on("baselayerchange", onBaselayerChange);
 		map.on("overlayadd", onOverlayAdd);
 
-		var southWest = unproject([0, 32768]);
-		var northEast = unproject([32768, 0]);
-		map.setMaxBounds(new L.LatLngBounds(southWest, northEast));
-		map.setView(unproject([16384, 16384]), 3);
+		getGW2API("/v1/continents.json", function(data) {
+			$.each(data.continents, function(id, continent) {
+				var name = continent.name;
+				var minZoom = continent.min_zoom;
+				var maxZoom = continent.max_zoom;
+				continents[name] = continent;
+				continents[name].continent_id = id;
+				continents[name].map_floor = { };
 
-		L.tileLayer("https://tiles.guildwars2.com/1/1/{z}/{x}/{y}.jpg", {
-			minZoom: 0,
-			maxZoom: 7,
-			continuousWorld: true
-		}).addTo(map);
+				tilelayers[name] = L.tileLayer("https://{s}.guildwars2.com/" + id + "/1/{z}/{x}/{y}.jpg", {
+					minZoom: minZoom,
+					maxZoom: maxZoom,
+					continuousWorld: true,
+					subdomains: ["tiles", "tiles1", "tiles2", "tiles3", "tiles4"],
+				});
+			});
 
-		$.each(overlays, function(id, value) {
-			overlays[id] = L.layerGroup().addTo(map);
-		});
-		L.control.layers(null, overlays).addTo(map);
+			tilelayers["Tyria"].addTo(map);
+			setContinentView(continents["Tyria"], 1);
 
-		getGW2API(["/v1/map_names.json", "/v1/maps.json"], function(data) {
-			var data_mapnames = data[0];
-			var data_maps = data[1];
-
-			var mapData = data_maps.maps;
-			var maps = {};
-
-			for (var i in data_mapnames) {
-				var id = data_mapnames[i].id;
-				if (mapData[id] !== undefined && mapData[id].continent_id == 1) {
-					maps[id] = mapData[id];
-					maps[id].map_id = id;
-					maps[id].map_type = "";
-				}
-			}
-			for (var i in city_maps) {
-				var id = city_maps[i];
-				maps[id] = mapData[id];
-				maps[id].map_id = id;
-				maps[id].map_type = "city";
-			}
-			for (var i in dungeon_maps) {
-				var id = dungeon_maps[i];
-				maps[id] = mapData[id];
-				maps[id].map_id = id;
-				maps[id].map_type = "dungeon";
-			}
-
-			for (var id in maps) {
-				addMapBoundary(maps[id]);
-			}
-		});
-
-		getGW2API("/v1/map_floor.json?continent_id=1&floor=1", function(data) {
-			var regions = data.regions;
-			for (var region in regions) {
-				var region_id = region;
-				region = regions[region_id];
-
-				var label = L.divIcon({ className: "region-label region-label-" + region_id, html: region.name, iconSize: null });
-				var regionName = L.marker(unproject(region.label_coord), { icon: label, zIndexOffset: 1000, clickable: false });
-				overlays["Region names"].addLayer(regionName);
-
-				$(".region-label-" + region_id).fixMapIconAnchor();
-			}
+			$.each(overlays, function(id, value) {
+				overlays[id] = L.layerGroup().addTo(map);
+			});
+			L.control.layers(tilelayers, overlays).addTo(map);
 		});
 	});
 </script>
