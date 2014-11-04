@@ -151,6 +151,16 @@ navweight: 0
 
 	$(function () {
 		map = L.map("map", { crs: L.CRS.Simple });
+		L.easyButton("glyphicon-resize-full", function() {
+			var $o = $(".glyphicon", this._container);
+			if ($o.hasClass("glyphicon-resize-full")) {
+				$o.removeClass("glyphicon-resize-full").addClass("glyphicon-resize-small");
+			} else {
+				$o.removeClass("glyphicon-resize-small").addClass("glyphicon-resize-full");
+			}
+			$("#map").toggleClass("leaflet-fullscreen");
+		}, "Toggle fullscreen", map);
+
 		map.on("baselayerchange", onBaselayerChange);
 		map.on("overlayadd", onOverlayAdd);
 		map.on("zoomend", onZoomEnd);
