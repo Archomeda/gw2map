@@ -159,6 +159,7 @@ navweight: 0
 				$o.removeClass("glyphicon-resize-small").addClass("glyphicon-resize-full");
 			}
 			$("#map").toggleClass("leaflet-fullscreen");
+			map.invalidateSize();
 		}, "Toggle fullscreen", map);
 
 		map.on("baselayerchange", onBaselayerChange);
