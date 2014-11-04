@@ -44,8 +44,15 @@ body {
     margin-top: $content-padding-top;
 }
 
-#content .container {
-    padding-bottom: 10px;
+#content {
+    @include flexdirection(row);
+
+    .container {
+        padding-bottom: 10px;
+    }
+    .left_container, .right_container {
+        @include flex(auto);
+    }
 }
 
 

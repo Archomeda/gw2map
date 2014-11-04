@@ -4,6 +4,29 @@ body {
     font-family: $font-family;
 }
 
+@media (min-width: 768px) {
+    #content .left_container, #content .right_container {
+        z-index: 0;
+        max-width: 800px;
+    }
+
+    #content .left_container {
+        padding-right: 100px;
+        margin-right: -100px;
+        padding-top: $content-padding-top;
+        margin-top: -$content-padding-top;
+        background: $background-image-left right top;
+    }
+
+    #content .right_container {
+        padding-left: 100px;
+        margin-left: -100px;
+        padding-top: $content-padding-top;
+        margin-top: -$content-padding-top;
+        //background: $background-image-right left top;
+    }
+}
+
 #content .container {
     z-index: 1;
 
