@@ -8,9 +8,64 @@ navweight: 0
 ---
 
 <script>
+	function onMapViewChange(e) {
+		if (!updatingHash) {
+			setHash(gw2map);
+		}
+	};
+
+	updatingHash = false;
+	lastHash = "";
+	function applyHash(hash) {
+		hash = location.hash.replace(/^#/, "");
+		if (lastHash != hash) {
+			lastHash = hash;
+
+			var args = hash.split("/");
+			if (args.length != 5) {
+				return;
+			}
+
+			var continent = parseInt(args[0]);
+			var floor = parseInt(args[1]);
+			var zoom = parseInt(args[2]);
+			var x = parseInt(args[3]);
+			var y = parseInt(args[4]);
+			if (isNaN(continent) || isNaN(floor) || isNaN(zoom) || isNaN(x) || isNaN(y)) {
+				return;
+			}
+
+			updatingHash = true;
+			gw2map.getLayer().setActiveContinent(continent);
+			gw2map.getLayer().setActiveFloor(floor);
+			gw2map.getMap().setView(gw2map.unproject([x, y]), zoom);
+			updatingHash = false;
+		}
+	}
+
+	function setHash(gw2map) {
+		var continent = gw2map.getLayer().getActiveContinent();
+		var floor = gw2map.getLayer().getActiveFloor();
+		var zoom = gw2map.getMap().getZoom();
+		var center = gw2map.project(gw2map.getMap().getCenter());
+		var x = center.x;
+		var y = center.y;
+
+		lastHash = [continent, floor, zoom, x, y].join("/");
+		location.replace("#" + lastHash);
+	}
+
 	$(function () {
 		gw2map = new GW2Map();
 		gw2map.setLocalAPIPath("{{ site.baseurl }}/assets/json");
-		gw2map.initMap("map");
+		gw2map.initMap("map", function() {
+			$(window).bind('hashchange', function() {
+				applyHash(location.hash);
+			});
+
+			applyHash(location.hash);
+			gw2map.getMap().on("moveend", onMapViewChange);
+			gw2map.getMap().on("mapviewupdate", onMapViewChange);
+		});
 	});
 </script>

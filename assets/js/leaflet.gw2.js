@@ -15,7 +15,7 @@ function GW2Map() {
     this.continents = { };
 
 
-    this.initMap = function(map_id) {
+    this.initMap = function(map_id, initCallback) {
         var _this = this;
         this._map = L.map(map_id, { crs: L.CRS.Simple });
         this._map.on("overlayadd", this._mapOnOverlayAdd, this);
@@ -61,15 +61,42 @@ function GW2Map() {
             }
             L.control.layers(null, _this._mapOverlays).addTo(_this._map);
 
-            _this.setMapView(1, 1);
+            _this.updateMapView();
+            if (initCallback) {
+                initCallback();
+            }
         });
     };
+
+    //=================
+    // Getters/setters
+    //=================
+    this.getMap = function() {
+        return this._map;
+
+    }
+
+    this.getLayer = function() {
+        return this._mapLayer;
+
+    }
+
+    this.getLocalAPIPath = function() {
+        return this._localAPIPath;
+    }
 
     this.setLocalAPIPath = function(path) {
         this._localAPIPath = path;
     }
 
-    this.setMapView = function(continent_id, floor_id) {
+
+    //=========================
+    // Layer content functions
+    //=========================
+    this.updateMapView = function() {
+        var continent_id = this._mapLayer.getActiveContinent();
+        var floor_id = this._mapLayer.getActiveFloor();
+
         var _this = this;
         var continent = this.continents[continent_id];
         var floor = null;
@@ -160,11 +187,10 @@ function GW2Map() {
             this.placeMapNames(continent.maps[floor_id]);
             this.placeMapBoundaries(continent.maps[floor_id]);
         }
+
+        this._map.fireEvent("mapviewupdate");
     };
 
-    //=========================
-    // Layer content functions
-    //=========================
     this.placeRegionNames = function(regions) {
         this._mapOverlays["Region names"].clearLayers();
 
@@ -267,19 +293,21 @@ function GW2Map() {
     };
 
     this._layerOnContinentChange = function(e) {
-        var floor = this._mapLayer.getActiveFloor();
-        this.setMapView(e.continent, floor);
+        this.updateMapView();
     };
 
     this._layerOnFloorChange = function(e) {
-        var continent = this._mapLayer.getActiveContinent();
-        this.setMapView(continent, e.floor);
+        this.updateMapView();
     };
 
 
     //======================
     // Map helper functions
     //======================
+    this.project = function(latlon) {
+        return this._map.project(latlon, this._map.getMaxZoom());
+    }
+
     this.unproject = function(coord) {
         return this._map.unproject(coord, this._map.getMaxZoom());
     }
