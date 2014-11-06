@@ -17,6 +17,15 @@
     color: #000;
 }
 
+.leaflet-control-continents .leaflet-control-layers-toggle {
+	background: none;
+	font-size: 18pt;
+	text-align: center;
+	line-height: 34px;
+	color: #777777;
+}
+
+
 .region-label, .map-label {
     text-shadow:
         -1px -1px 0 #000,
