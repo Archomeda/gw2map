@@ -1,0 +1,47 @@
+{
+    "map_types": {
+        "18": {
+            "type": "city"
+        },
+        "50": {
+            "type": "city"
+        },
+        "91": {
+            "type": "city"
+        },
+        "139": {
+            "type": "city"
+        },
+        "218": {
+            "type": "city"
+        },
+        "326": {
+            "type": "city"
+        },
+
+        "33": {
+            "type": "dungeon"
+        },
+        "76": {
+            "type": "dungeon"
+        },
+        "68": {
+            "type": "dungeon"
+        },
+        "63": {
+            "type": "dungeon"
+        },
+        "69": {
+            "type": "dungeon"
+        },
+        "71": {
+            "type": "dungeon"
+        },
+        "81": {
+            "type": "dungeon"
+        },
+        "112": {
+            "type": "dungeon"
+        }
+    }
+}
